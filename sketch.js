@@ -1,145 +1,104 @@
-var zombie, zombieImg;
-var tom, tomImg,tomImg2,tomImg3
-var background1,backgroundImg;
-var life = 5;
-var bulletImg,bullet
-var zombieGroup, bulletGroup;
+var dragon,dragonImg
+var vampire,vampireImg
+var fireball, fireBallImg 
+var background1,backgroundImg 
+var life = 5
 
 var score = 0
 var gameState = "play"
 
 
-
-
 function preload(){
-tomImg = loadAnimation("shooter_1.png");
-tomImg2 = loadAnimation("shooter_2.png");
-tomImg3 = loadAnimation("shooter_3.png");
-zombieImg = loadImage("zombie.png");
-backgroundImg = loadImage("bg.jpeg");
-bulletImg = loadAnimation("bullet1.png");
+dragonImg = loadImage("Dragon.png")
+vampireImg = loadImage("Vampire.jpeg")
+fireBallImg = loadImage("fire ball.jpeg ")
+backgroundImg = loadImage("bg.png")
 }
 
 
 
-function setup(){
-createCanvas(windowWidth, windowHeight);
 
-background1 = createSprite(windowWidth/2,windowHeight/2)
-background1.addImage(backgroundImg)
-background1.scale = 1.15
+function setup() {
+  createCanvas(800,400);
+ 
+  background1 = createSprite(600,300,400,20)
+  background1.addImage(backgroundImg)
+  backgroundImg.scale = 1.15
 
-tom = createSprite(80,440)
-tom.addAnimation('eyes open',tomImg2)
-tom.addAnimation('gun firing' ,tomImg3)
-tom.scale = 0.3
+  dragon = createSprite(50,300)
+  dragon.addImage(dragonImg)
+  dragon.scale = 0.09
 
-bulletGroup = new Group()
-zombieGroup = new Group()
+  vampireGroup = new Group()
+  fireballGroup = new Group()
 }
 
+function draw() {
+  background(255,255,255); 
 
-function draw(){
-background('black')
-
-
-if(gameState === "play"){
-
-spawnZombies()
-
-
-
-if(keyDown("Up_Arrow")){
-tom.y = tom.y -7
-}
-
-if(keyDown("Down_Arrow")){
-    tom.y = tom.y +7
-}
-
-if(keyDown("Right_Arrow")){
-    tom.x = tom.x +7
-}
-
-if(keyDown("Left_Arrow")){
-    tom.x = tom.x -7
-}
-
-
-if(keyWentDown("space")){
-tom.changeAnimation('gun firing')
-bullet = createSprite(100,100)
-bullet.y = tom.y -2
-bullet.x = tom.x
-bullet.addAnimation('firing',bulletImg);
-bullet.scale = 0.1
-bullet.velocityX = 50
-bulletGroup.add(bullet)
-}
-
-else if(keyWentUp("space")){
-tom.changeAnimation('eyes open')
-}
-
-if(zombieGroup.isTouching(bulletGroup)){
-    for(var i = 0; i<zombieGroup.length; i++){
-        if(zombieGroup[i].isTouching(bulletGroup)){
-        zombieGroup[i].destroy()
-        bulletGroup.destroyEach()
-        score = score +2
-        }
-        }
-}
-
-if(zombieGroup.isTouching(tom)){
-    for(var i = 0; i<zombieGroup.length; i++){
-        if(zombieGroup[i].isTouching(tom)){
-        zombieGroup[i].destroy()
-        life = life-1
-        if(life<=0){
-        tom.destroy()
-        gameState = "end";
-        }
-        }
+  spawnVampires()
+  
+  if(keyDown("Up_Arrow")){
+    dragon.y = dragon.y -3
     }
-}
-
-drawSprites()
-
-fill('red')
-textSize(40)
-text("Life:"+life,windowWidth -170, windowHeight-700)
-fill('red')
-textSize(40)
-text("Score:"+score,windowWidth -200, windowHeight - 650)
-
-}
-
-if(gameState === "end"){
-    zombieGroup.destroyEach()
-
-
- fill('green')
-textSize(50)
-text("Game Over", 600,400)
-
-}
-
-
-}
-
-
-function spawnZombies(){
-    if(frameCount % 10=== 0){
-        zombie = createSprite(1000,420);
-        zombie.x = random(1000,2000)
-        zombie.y = random(420, 800)
-        zombie.addImage(zombieImg)
-        zombie.scale = 0.11
-        zombie.velocityX = -3
     
-    zombieGroup.add(zombie)
-    }
+    if(keyDown("Down_Arrow")){
+        dragon.y = dragon.y +3
     }
 
+    if(keyDown("Right_Arrow")){
+      dragon.x = dragon.x +3
+  }
 
+    if(vampireGroup.isTouching(dragon)){
+      dragon.destroy()
+      
+  }
+
+
+    if(keyWentDown("space")){
+      fireball = createSprite(100,100)
+      fireball.x = dragon.x
+      fireball.y = dragon.y
+      fireball.addImage(fireBallImg)
+      fireball.scale = 0.1
+      fireball.velocityX = 5
+      
+fireballGroup.add(fireball)
+      }
+
+      function spawnVampires(){
+        if(frameCount % 80 === 0){
+          vampire = createSprite(500,100)
+          vampire.x = random(500,800)
+          vampire.y = random(10,300)
+          vampire.addImage(vampireImg)
+          vampire.scale = 0.09
+          vampire.velocityX = -1
+        if(score>20){
+        vampire.velocityX = -5
+        }
+          vampireGroup.add(vampire)
+        }
+        }
+
+
+
+for(var i = 0; i<vampireGroup.length; i++){
+if(vampireGroup[i].isTouching(fireballGroup)){
+vampireGroup[i].destroy()
+fireballGroup.destroyEach()
+score = score +5
+}
+}
+
+
+  drawSprites();
+
+  fill('red')
+textSize(20)
+text("Life:"+life,100,20)
+fill('red')
+textSize(20)
+text("Score:"+score, 200 ,20)
+}
